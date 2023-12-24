@@ -13,7 +13,7 @@ private val example = """
 """.trimIndent() to 6440
 
 enum class Card {
-    `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, T, J, Q, K, A
+    J, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, T, Q, K, A
 }
 
 data class Hand(val cards: List<Card>) {
@@ -24,8 +24,9 @@ data class Hand(val cards: List<Card>) {
     constructor(text: String): this(text.map { Card.valueOf(it.toString()) })
 
     val value: Int = run {
-        val numberOfCards = cards.groupingBy { it }.eachCount().values.sortedDescending()
-        val mostFrequent = numberOfCards.first()
+        val numberOfJokers = cards.count { it == Card.J }
+        val numberOfCards = cards.filter { it != Card.J }.groupingBy { it }.eachCount().values.sortedDescending()
+        val mostFrequent = (numberOfCards.firstOrNull() ?: 0) + numberOfJokers
         when {
             mostFrequent == 5 -> 100
             mostFrequent == 4 -> 90
